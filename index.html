@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Магазин - Система аккаунтов и покупок</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Шапка сайта -->
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">🛒 Мой Магазин</h1>
+            <nav class="nav">
+                <a href="#" onclick="showSection('products')">Товары</a>
+                <a href="#" onclick="showSection('cart')">Корзина (<span id="cartCount">0</span>)</a>
+                <a href="#" id="accountLink" onclick="showSection('account')">Аккаунт</a>
+                <a href="#" id="loginLink" onclick="showSection('login')">Войти</a>
+                <a href="#" id="logoutLink" onclick="logout()" style="display:none;">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="container">
+        <!-- Секция товаров -->
+        <section id="productsSection" class="section">
+            <h2>Наши товары</h2>
+            <div id="productsList" class="products-grid">
+                <!-- Товары будут загружены через JavaScript -->
+            </div>
+        </section>
+
+        <!-- Секция корзины -->
+        <section id="cartSection" class="section" style="display:none;">
+            <h2>Корзина</h2>
+            <div id="cartItems">
+                <!-- Корзина будет загружена через JavaScript -->
+            </div>
+            <div id="cartTotal" class="cart-total"></div>
+            <button class="btn btn-primary" onclick="checkout()">Оформить заказ</button>
+        </section>
+
+        <!-- Секция аккаунта -->
+        <section id="accountSection" class="section" style="display:none;">
+            <h2>Личный кабинет</h2>
+            <div id="accountInfo">
+                <!-- Информация об аккаунте -->
+            </div>
+            <div id="purchaseHistory">
+                <!-- История покупок -->
+            </div>
+        </section>
+
+        <!-- Секция входа/регистрации -->
+        <section id="loginSection" class="section" style="display:none;">
+            <div class="auth-container">
+                <h2 id="authTitle">Вход в систему</h2>
+                <form id="authForm">
+                    <div class="form-group">
+                        <label for="username">Имя пользователя:</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group" id="emailGroup" style="display:none;">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Пароль:</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <div class="form-group" id="confirmPasswordGroup" style="display:none;">
+                        <label for="confirmPassword">Подтвердите пароль:</label>
+                        <input type="password" id="confirmPassword">
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="authButton">Войти</button>
+                </form>
+                <p class="auth-toggle">
+                    <a href="#" onclick="toggleAuthMode()" id="toggleAuthLink">Нет аккаунта? Зарегистрироваться</a>
+                </p>
+                <div id="authMessage" class="message"></div>
+            </div>
+        </section>
+
+        <!-- Секция оплаты -->
+        <section id="checkoutSection" class="section" style="display:none;">
+            <h2>Оформление заказа</h2>
+            <div id="checkoutSummary"></div>
+            <form id="paymentForm">
+                <h3>Платежная информация</h3>
+                <div class="form-group">
+                    <label for="cardNumber">Номер карты:</label>
+                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="expiryDate">Срок действия:</label>
+                        <input type="text" id="expiryDate" placeholder="MM/YY" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cvv">CVV:</label>
+                        <input type="text" id="cvv" placeholder="123" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Оплатить</button>
+            </form>
+            <div id="paymentMessage" class="message"></div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
