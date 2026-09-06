@@ -3,111 +3,592 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой Магазин - Система аккаунтов и покупок</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Nikkraft VPN — Быстрый и безопасный VPN-сервис</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a1a;
+            --bg-secondary: #12122a;
+            --accent: #6c5ce7;
+            --accent-hover: #7f70f0;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0c8;
+            --success: #00b894;
+            --card-bg: #1a1a35;
+            --border: #2a2a4a;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: rgba(10, 10, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent), #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .btn-nav {
+            background: var(--accent);
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .btn-nav:hover {
+            background: var(--accent-hover);
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 5% 5rem;
+            background: radial-gradient(circle at 30% 50%, rgba(108, 92, 231, 0.15), transparent 60%),
+                        radial-gradient(circle at 70% 50%, rgba(0, 184, 148, 0.1), transparent 50%);
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: inline-block;
+            transition: all 0.3s ease;
+            border: 2px solid var(--accent);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3);
+        }
+
+        .hero-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(108, 92, 231, 0.2);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 5%;
+            background: var(--bg-secondary);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--text-primary);
+        }
+
+        .features-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 0.8rem;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 5rem 5%;
+            background: var(--bg-primary);
+        }
+
+        .pricing-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .pricing-card {
+            background: var(--card-bg);
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pricing-card.popular {
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.2);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 1.5rem 0;
+            color: var(--accent);
+        }
+
+        .price span {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+        }
+
+        .pricing-features li::before {
+            content: "✓";
+            color: var(--success);
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+
+        .btn-pricing {
+            background: var(--accent);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-pricing:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 5rem 5%;
+            background: var(--bg-secondary);
+        }
+
+        .contact-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-form {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-group textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-primary);
+            padding: 2rem 5%;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-links a:not(.btn-nav) {
+                display: none;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+            }
+
+            .contact-form {
+                padding: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Шапка сайта -->
-    <header class="header">
-        <div class="container">
-            <h1 class="logo">🛒 Мой Магазин</h1>
-            <nav class="nav">
-                <a href="#" onclick="showSection('products')">Товары</a>
-                <a href="#" onclick="showSection('cart')">Корзина (<span id="cartCount">0</span>)</a>
-                <a href="#" id="accountLink" onclick="showSection('account')">Аккаунт</a>
-                <a href="#" id="loginLink" onclick="showSection('login')">Войти</a>
-                <a href="#" id="logoutLink" onclick="logout()" style="display:none;">Выйти</a>
-            </nav>
-        </div>
+    <!-- Header -->
+    <header>
+        <nav class="nav-container">
+            <a href="#" class="logo">Nikkraft VPN</a>
+            <div class="nav-links">
+                <a href="#features">Преимущества</a>
+                <a href="#pricing">Тарифы</a>
+                <a href="#contact">Контакты</a>
+                <a href="#pricing" class="btn-nav">Подключиться</a>
+            </div>
+        </nav>
     </header>
 
-    <!-- Основной контент -->
-    <main class="container">
-        <!-- Секция товаров -->
-        <section id="productsSection" class="section">
-            <h2>Наши товары</h2>
-            <div id="productsList" class="products-grid">
-                <!-- Товары будут загружены через JavaScript -->
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Nikkraft VPN — Ваша свобода в интернете</h1>
+                <p>Быстрое, безопасное и анонимное соединение с интернетом. Защитите свои данные и получите доступ к любому контенту без ограничений.</p>
+                <a href="#pricing" class="btn-primary">Выбрать тариф</a>
             </div>
-        </section>
+            <div class="hero-image">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%231a1a35'/%3E%3Ccircle cx='200' cy='150' r='80' fill='%236c5ce7' opacity='0.5'/%3E%3Cpath d='M200 70 L230 150 L200 230 L170 150 Z' fill='%23ffffff' opacity='0.3'/%3E%3Ctext x='200' y='155' text-anchor='middle' fill='white' font-size='40' font-weight='bold'%3EN%3C/text%3E%3C/svg%3E" alt="Nikkraft VPN Shield">
+            </div>
+        </div>
+    </section>
 
-        <!-- Секция корзины -->
-        <section id="cartSection" class="section" style="display:none;">
-            <h2>Корзина</h2>
-            <div id="cartItems">
-                <!-- Корзина будет загружена через JavaScript -->
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2 class="section-title">Почему выбирают Nikkraft VPN?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Максимальная защита</h3>
+                <p>Военное шифрование AES-256 и протоколы нового поколения обеспечивают полную защиту ваших данных.</p>
             </div>
-            <div id="cartTotal" class="cart-total"></div>
-            <button class="btn btn-primary" onclick="checkout()">Оформить заказ</button>
-        </section>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Высокая скорость</h3>
+                <p>Оптимизированные серверы по всему миру гарантируют минимальную задержку и высокую скорость соединения.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>Глобальная сеть</h3>
+                <p>Более 1000 серверов в 50+ странах мира. Получите доступ к контенту из любой точки планеты.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Анонимность</h3>
+                <p>Строгая политика отсутствия логов и анонимные способы оплаты гарантируют вашу конфиденциальность.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Все устройства</h3>
+                <p>Поддержка Windows, macOS, iOS, Android и Linux. До 10 устройств одновременно на одном аккаунте.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>Поддержка 24/7</h3>
+                <p>Наша команда поддержки всегда готова помочь вам в любое время дня и ночи.</p>
+            </div>
+        </div>
+    </section>
 
-        <!-- Секция аккаунта -->
-        <section id="accountSection" class="section" style="display:none;">
-            <h2>Личный кабинет</h2>
-            <div id="accountInfo">
-                <!-- Информация об аккаунте -->
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <h2 class="section-title">Выберите свой тариф</h2>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>Базовый</h3>
+                <div class="price">$4.99 <span>/мес</span></div>
+                <ul class="pricing-features">
+                    <li>До 3 устройств</li>
+                    <li>Доступ к 500+ серверам</li>
+                    <li>Базовая защита</li>
+                    <li>Поддержка по email</li>
+                </ul>
+                <a href="#" class="btn-pricing">Выбрать</a>
             </div>
-            <div id="purchaseHistory">
-                <!-- История покупок -->
+            <div class="pricing-card popular">
+                <div class="popular-badge">Популярный</div>
+                <h3>Премиум</h3>
+                <div class="price">$9.99 <span>/мес</span></div>
+                <ul class="pricing-features">
+                    <li>До 10 устройств</li>
+                    <li>Все 1000+ серверов</li>
+                    <li>Максимальная защита</li>
+                    <li>Приоритетная поддержка 24/7</li>
+                    <li>Без рекламы</li>
+                </ul>
+                <a href="#" class="btn-pricing">Выбрать</a>
             </div>
-        </section>
+            <div class="pricing-card">
+                <h3>Годовой</h3>
+                <div class="price">$99 <span>/год</span></div>
+                <ul class="pricing-features">
+                    <li>Все функции Премиум</li>
+                    <li>Экономия 20%</li>
+                    <li>Бонус +2 месяца</li>
+                    <li>Гарантия возврата 30 дней</li>
+                </ul>
+                <a href="#" class="btn-pricing">Выбрать</a>
+            </div>
+        </div>
+    </section>
 
-        <!-- Секция входа/регистрации -->
-        <section id="loginSection" class="section" style="display:none;">
-            <div class="auth-container">
-                <h2 id="authTitle">Вход в систему</h2>
-                <form id="authForm">
-                    <div class="form-group">
-                        <label for="username">Имя пользователя:</label>
-                        <input type="text" id="username" required>
-                    </div>
-                    <div class="form-group" id="emailGroup" style="display:none;">
-                        <label for="email">Email:</label>
-                        <input type="email" id="email">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Пароль:</label>
-                        <input type="password" id="password" required>
-                    </div>
-                    <div class="form-group" id="confirmPasswordGroup" style="display:none;">
-                        <label for="confirmPassword">Подтвердите пароль:</label>
-                        <input type="password" id="confirmPassword">
-                    </div>
-                    <button type="submit" class="btn btn-primary" id="authButton">Войти</button>
-                </form>
-                <p class="auth-toggle">
-                    <a href="#" onclick="toggleAuthMode()" id="toggleAuthLink">Нет аккаунта? Зарегистрироваться</a>
-                </p>
-                <div id="authMessage" class="message"></div>
-            </div>
-        </section>
-
-        <!-- Секция оплаты -->
-        <section id="checkoutSection" class="section" style="display:none;">
-            <h2>Оформление заказа</h2>
-            <div id="checkoutSummary"></div>
-            <form id="paymentForm">
-                <h3>Платежная информация</h3>
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <h2 class="section-title">Свяжитесь с нами</h2>
+        <div class="contact-container">
+            <form class="contact-form" onsubmit="alert('Спасибо! Мы свяжемся с вами в ближайшее время.'); return false;">
                 <div class="form-group">
-                    <label for="cardNumber">Номер карты:</label>
-                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" required>
+                    <label for="name">Имя</label>
+                    <input type="text" id="name" name="name" required placeholder="Введите ваше имя">
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="expiryDate">Срок действия:</label>
-                        <input type="text" id="expiryDate" placeholder="MM/YY" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="cvv">CVV:</label>
-                        <input type="text" id="cvv" placeholder="123" required>
-                    </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required placeholder="Введите ваш email">
                 </div>
-                <button type="submit" class="btn btn-success">Оплатить</button>
+                <div class="form-group">
+                    <label for="message">Сообщение</label>
+                    <textarea id="message" name="message" required placeholder="Введите ваше сообщение..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer;">Отправить сообщение</button>
             </form>
-            <div id="paymentMessage" class="message"></div>
-        </section>
-    </main>
+        </div>
+    </section>
 
-    <script src="script.js"></script>
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Nikkraft VPN. Все права защищены. Политика конфиденциальности | Условия использования</p>
+    </footer>
+
+    <script>
+        // Плавная прокрутка для навигации
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Анимация появления элементов при прокрутке
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Применяем анимацию к карточкам
+        document.querySelectorAll('.feature-card, .pricing-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+
+        // Инициализация при загрузке
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.feature-card, .pricing-card').forEach(card => {
+                if (card.getBoundingClientRect().top < window.innerHeight) {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
