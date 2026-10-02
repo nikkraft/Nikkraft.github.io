@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>С днём рождения!</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;overflow-x:hidden;}
+.card{background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);border-radius:12px;padding:50px;max-width:700px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);position:relative;overflow:hidden;}
+.emoji-line{font-size:42px;margin-bottom:15px;position:relative;z-index:2;}
+h1{font-size:32px;color:#c53030;font-family:Georgia, serif;margin-bottom:25px;position:relative;z-index:2;}
+p{font-size:17px;line-height:1.7;color:#4a2c1a;white-space:pre-wrap;position:relative;z-index:2;}
+.from{margin-top:30px;font-style:italic;color:#7b341e;font-size:18px;position:relative;z-index:2;}
+.particle{position:absolute;top:-50px;pointer-events:none;z-index:1;animation:fall linear infinite;}
+@keyframes fall{0%{transform:translateY(-100px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0.8;}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-20px) rotate(10deg);}}
+@keyframes pop{0%{transform:scale(0);opacity:0;}50%{transform:scale(1.2);}100%{transform:scale(1);opacity:1;}}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+@keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px) rotate(-2deg);}75%{transform:translateX(5px) rotate(2deg);}}
+@keyframes rainbow{0%{filter:hue-rotate(0deg);}100%{filter:hue-rotate(360deg);}}
+@keyframes bounceIn{0%{transform:scale(0.3);opacity:0;}50%{transform:scale(1.05);}70%{transform:scale(0.95);}100%{transform:scale(1);opacity:1;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes slideInLeft{from{transform:translateX(-100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes slideInRight{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes slideInUp{from{transform:translateY(100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes zoomIn{0%{transform:scale(0);opacity:0;}60%{transform:scale(1.15);}100%{transform:scale(1);opacity:1;}}
+@keyframes flipIn{0%{transform:perspective(600px) rotateY(90deg);opacity:0;}100%{transform:perspective(600px) rotateY(0deg);opacity:1;}}
+@keyframes rotateIn{0%{transform:rotate(-360deg) scale(0);opacity:0;}100%{transform:rotate(0) scale(1);opacity:1;}}
+@keyframes swing{20%{transform:rotate(15deg);}40%{transform:rotate(-10deg);}60%{transform:rotate(5deg);}80%{transform:rotate(-5deg);}100%{transform:rotate(0);}}
+@keyframes wobble{0%{transform:translateX(0);}15%{transform:translateX(-25%) rotate(-5deg);}30%{transform:translateX(20%) rotate(3deg);}45%{transform:translateX(-15%) rotate(-3deg);}60%{transform:translateX(10%) rotate(2deg);}75%{transform:translateX(-5%) rotate(-1deg);}100%{transform:translateX(0);}}
+@keyframes glow{0%,100%{text-shadow:0 0 5px #fff,0 0 10px #fff,0 0 20px #f6ad55,0 0 30px #f6ad55,0 0 40px #f6ad55;}50%{text-shadow:0 0 10px #fff,0 0 20px #f6ad55,0 0 30px #f6ad55,0 0 40px #f6ad55,0 0 50px #f6ad55;}}
+@keyframes blurIn{0%{filter:blur(20px);opacity:0;}100%{filter:blur(0);opacity:1;}}
+@keyframes wave{0%,100%{transform:translateY(0);}25%{transform:translateY(-10px) rotate(-3deg);}75%{transform:translateY(10px) rotate(3deg);}}
+@keyframes neon{0%,100%{text-shadow:0 0 5px #00f5ff,0 0 10px #00f5ff,0 0 20px #00f5ff,0 0 40px #00f5ff;color:#fff;}50%{text-shadow:0 0 2px #00f5ff,0 0 5px #00f5ff,0 0 10px #00f5ff,0 0 20px #00f5ff;color:#00d4e8;}}
+@keyframes glitch{0%,100%{transform:translate(0);text-shadow:0 0 0 transparent;}20%{transform:translate(-2px,2px);text-shadow:2px 0 #ff006e,-2px 0 #00f5ff;}40%{transform:translate(-2px,-2px);text-shadow:-2px 0 #ff006e,2px 0 #00f5ff;}60%{transform:translate(2px,2px);text-shadow:2px 0 #ff006e,-2px 0 #00f5ff;}80%{transform:translate(2px,-2px);text-shadow:-2px 0 #ff006e,2px 0 #00f5ff;}}
+@keyframes heartBeat{0%{transform:scale(1);}14%{transform:scale(1.15);}28%{transform:scale(1);}42%{transform:scale(1.15);}70%{transform:scale(1);}}
+@keyframes tada{0%{transform:scale(1) rotate(0);}10%,20%{transform:scale(0.9) rotate(-3deg);}30%,50%,70%,90%{transform:scale(1.1) rotate(3deg);}40%,60%,80%{transform:scale(1.1) rotate(-3deg);}100%{transform:scale(1) rotate(0);}}
+@keyframes rubberBand{0%{transform:scale(1);}30%{transform:scaleX(1.25) scaleY(0.75);}40%{transform:scaleX(0.75) scaleY(1.25);}50%{transform:scaleX(1.15) scaleY(0.85);}65%{transform:scaleX(0.95) scaleY(1.05);}75%{transform:scaleX(1.05) scaleY(0.95);}100%{transform:scale(1);}}
+.effect-shimmer h1{background:linear-gradient(90deg,#c53030 0%,#f6ad55 50%,#c53030 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 3s linear infinite;}
+.effect-pop h1{animation:pop 0.6s ease-out;}
+.effect-pulse h1{animation:pulse 2s ease-in-out infinite;}
+.effect-shake h1{animation:shake 0.5s ease-in-out 3;}
+.effect-rainbow h1{animation:rainbow 3s linear infinite;}
+.effect-bounce h1{animation:bounceIn 0.8s ease-out;}
+.effect-fade h1{animation:fadeIn 1s ease-out;}
+.effect-slideLeft h1{animation:slideInLeft 0.8s ease-out;}
+.effect-slideRight h1{animation:slideInRight 0.8s ease-out;}
+.effect-slideUp h1{animation:slideInUp 0.8s ease-out;}
+.effect-zoom h1{animation:zoomIn 0.7s ease-out;}
+.effect-flip h1{animation:flipIn 0.9s ease-out;}
+.effect-rotate h1{animation:rotateIn 1s ease-out;}
+.effect-swing h1{animation:swing 1s ease-out;transform-origin:top center;}
+.effect-wobble h1{animation:wobble 1s ease-out;}
+.effect-glow h1{animation:glow 2s ease-in-out infinite;}
+.effect-blur h1{animation:blurIn 0.9s ease-out;}
+.effect-wave h1{animation:wave 3s ease-in-out infinite;}
+.effect-neon h1{animation:neon 1.5s ease-in-out infinite;}
+.effect-glitch h1{animation:glitch 0.8s steps(2) infinite;}
+.effect-heartBeat h1{animation:heartBeat 1.5s ease-in-out infinite;}
+.effect-tada h1{animation:tada 1.2s ease-out;}
+.effect-rubberBand h1{animation:rubberBand 1s ease-out;}
+img{max-width:100%;}
+</style>
+</head><body>
+
+<div class="card effect-shimmer">
+<div class="particle" style="left:35.611159372738086%;animation-duration:8.44536788176828s;animation-delay:4.128299536038872s;font-size:20.87528484698646px;">🎉</div><div class="particle" style="left:27.778438291943896%;animation-duration:4.145217681596571s;animation-delay:2.247944676253772s;font-size:24.444221791683763px;">🎉</div><div class="particle" style="left:77.22369691488899%;animation-duration:5.02385395780137s;animation-delay:1.8235313917576612s;font-size:27.090709808121616px;">🎉</div><div class="particle" style="left:29.293232585352825%;animation-duration:6.68901512960964s;animation-delay:3.52534796063444s;font-size:33.25179657400938px;">🎉</div><div class="particle" style="left:71.6100836865223%;animation-duration:4.130491057365199s;animation-delay:0.38660048858024265s;font-size:30.80560353065256px;">🎉</div><div class="particle" style="left:75.70640347021167%;animation-duration:9.451620503116278s;animation-delay:2.7306050823488293s;font-size:29.64718681411704px;">🎉</div><div class="particle" style="left:61.09745381642081%;animation-duration:4.964894921003781s;animation-delay:4.820569377642897s;font-size:27.593283704229503px;">🎉</div><div class="particle" style="left:58.075475858607575%;animation-duration:6.6789558945656085s;animation-delay:3.77322377527098s;font-size:21.148560695347363px;">🎉</div><div class="particle" style="left:56.950352153640374%;animation-duration:8.741218497857437s;animation-delay:4.9313460551480075s;font-size:19.7712201470346px;">🎉</div><div class="particle" style="left:2.5770124214491763%;animation-duration:7.7733401762237655s;animation-delay:0.6648901151850584s;font-size:25.759072396578905px;">🎉</div><div class="particle" style="left:96.28487714567635%;animation-duration:8.89157617756904s;animation-delay:0.35477771239812217s;font-size:17.7819644319276px;">🎉</div><div class="particle" style="left:88.22173890092252%;animation-duration:7.43813762235915s;animation-delay:0.185007511952322s;font-size:29.19838759865116px;">🎉</div>
+<div class="emoji-line">🎂🎈🎁</div>
+
+
+<h1>С днём рождения!</h1>
+<p>Дорогая МАМА!
+
+Желаю тебе счастья, здоровья, успехов и исполнения всех желаний! Пусть каждый день приносит радость и улыбки. Спасибо, что ты рядом!</p>
+<div class="from">— С любовью</div>
+</div>
+</body></html>
