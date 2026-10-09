@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pozdrav — генератор поздравлений</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="light">
+<div class="container">
+  <h1 id="uiTitle">🎉 Pozdrav</h1>
+  <p class="subtitle" id="uiSubtitle"></p>
+
+  <div class="top-bar">
+    <button class="theme-toggle" onclick="toggleUILang()" id="langBtn">🌐 RU</button>
+    <button class="theme-toggle" onclick="openThemeModal()" id="themeBtn">🎨</button>
+    <button class="theme-toggle" onclick="showFullscreen()" id="btnFullscreen"></button>
+    <button class="theme-toggle" onclick="randomize()" id="btnRandom"></button>
+    <button class="theme-toggle" onclick="openModal('qrModal');generateQR()" id="btnQR"></button>
+    <button class="theme-toggle" onclick="openPreviewTab()" id="btnPreviewTab">🆕</button>
+  </div>
+
+  <div class="panel">
+    <h2><span id="tplPanelTitle"></span><span class="template-counter" id="tplCounter"></span>
+      <button class="mini ghost" onclick="saveCustomTemplate()" id="btnSaveCurrent"></button></h2>
+    <div class="category-bar" id="categoryBar"></div>
+    <div class="templates" id="templates"></div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h2 id="constructorTitle"></h2>
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab(this,'tab-basic')" id="tabBtnBasic"></button>
+        <button class="tab" onclick="switchTab(this,'tab-style')" id="tabBtnStyle"></button>
+        <button class="tab" onclick="switchTab(this,'tab-layout')" id="tabBtnLayout"></button>
+        <button class="tab" onclick="switchTab(this,'tab-effects')" id="tabBtnEffects"></button>
+        <button class="tab" onclick="switchTab(this,'tab-media')" id="tabBtnMedia"></button>
+        <button class="tab" onclick="switchTab(this,'tab-extras')" id="tabBtnExtras"></button>
+      </div>
+
+      <div id="tab-basic">
+        <label id="lblRecipient"></label><input id="recipient" oninput="render()">
+        <label id="lblTitle"></label><input id="title" oninput="render()">
+        <label id="lblMessage"></label><textarea id="message" oninput="render();updateCounters()"></textarea>
+        <div class="char-counter"><span id="msgCount">0</span> <span id="lblChars"></span> • <span id="wordCount">0</span> <span id="lblWords"></span> • ~<span id="readTime">0</span> <span id="lblRead"></span></div>
+        <label id="lblSender"></label><input id="sender" oninput="render()">
+        <label id="lblEmojiLine"></label><input id="emojiLine" oninput="render()">
+        <label id="lblVars"></label>
+        <div>
+          <span class="variable-tag" onclick="insertVariable('{name}')">{name}</span>
+          <span class="variable-tag" onclick="insertVariable('{sender}')">{sender}</span>
+          <span class="variable-tag" onclick="insertVariable('{date}')">{date}</span>
+          <span class="variable-tag" onclick="insertVariable('{year}')">{year}</span>
+          <span class="variable-tag" onclick="insertVariable('{time}')">{time}</span>
+        </div>
+        <label id="lblEmoji"></label><div class="emoji-grid" id="emojiPicker"></div>
+        <label id="lblStickers"></label><div class="sticker-grid" id="stickerGrid"></div>
+      </div>
+
+      <div id="tab-style" class="hidden">
+        <label id="lblAppTheme"></label>
+        <div class="theme-grid" id="appThemeGrid"></div>
+        <label id="lblColorTheme"></label>
+        <div class="color-row" id="colorRow"></div>
+        <label id="lblCustomGrad"></label>
+        <div style="display:flex;gap:8px">
+          <input type="color" id="c1" value="#667eea" style="height:40px;padding:2px" oninput="setCustomGradient()">
+          <input type="color" id="c2" value="#764ba2" style="height:40px;padding:2px" oninput="setCustomGradient()">
+        </div>
+        <label><span id="lblSize"></span>: <span id="sizeVal">28</span>px</label>
+        <input type="range" id="size" min="16" max="80" value="28" oninput="sizeVal.textContent=this.value;render()">
+        <label><span id="lblMsgSize"></span>: <span id="msgSizeVal">17</span>px</label>
+        <input type="range" id="msgSize" min="12" max="30" value="17" oninput="msgSizeVal.textContent=this.value;render()">
+        <label id="lblFont"></label>
+        <select id="fontTitle" onchange="render()">
+          <option value="Georgia,serif">Georgia</option>
+          <option value="'Times New Roman',serif">Times</option>
+          <option value="'Segoe UI',sans-serif">Segoe UI</option>
+          <option value="Arial,sans-serif">Arial</option>
+          <option value="'Comic Sans MS',cursive">Comic Sans</option>
+          <option value="'Courier New',monospace">Courier</option>
+          <option value="Impact,sans-serif">Impact</option>
+        </select>
+        <label id="lblTitleColor"></label><input type="color" id="titleColor" value="#c53030" oninput="render()">
+        <label id="lblMsgColor"></label><input type="color" id="msgColor" value="#4a2c1a" oninput="render()">
+        <label id="lblAlign"></label>
+        <select id="align" onchange="render()">
+          <option value="center" id="optAlignCenter"></option>
+          <option value="left" id="optAlignLeft"></option>
+          <option value="right" id="optAlignRight"></option>
+          <option value="justify" id="optAlignJustify"></option>
+        </select>
+        <label><span id="lblRadius"></span>: <span id="radiusVal">12</span>px</label>
+        <input type="range" id="radius" min="0" max="50" value="12" oninput="radiusVal.textContent=this.value;render()">
+        <label><span id="lblOpacity"></span>: <span id="opacityVal">0</span>%</label>
+        <input type="range" id="bgOpacity" min="0" max="50" value="0" oninput="opacityVal.textContent=this.value;render()">
+      </div>
+
+      <div id="tab-layout" class="hidden">
+        <label id="lblLayout"></label>
+        <div class="layout-grid" id="layoutGrid"></div>
+        <label id="lblBlocks"></label>
+        <div style="padding:10px;background:var(--b);border-radius:8px;font-size:12px;color:var(--tm)">
+          <div id="blocksList"></div>
+        </div>
+        <div style="text-align:center;margin-top:10px">
+          <button class="mini ghost" onclick="resetBlockOrder()" id="btnResetOrder"></button>
+        </div>
+      </div>
+
+      <div id="tab-effects" class="hidden">
+        <label id="lblAnimation"></label>
+        <select id="animation" onchange="render()">
+          <option value="" id="optNoAnim"></option>
+          <optgroup id="grpClassic">
+            <option value="effect-shimmer">✨ Shimmer</option>
+            <option value="effect-pop">💥 Pop</option>
+            <option value="effect-pulse">💓 Pulse</option>
+            <option value="effect-float">🎈 Float</option>
+            <option value="effect-bounce">⚽ Bounce</option>
+          </optgroup>
+          <optgroup id="grpEntry">
+            <option value="effect-fade">🌫️ Fade</option>
+            <option value="effect-slideLeft">⬅️ Slide L</option>
+            <option value="effect-slideRight">➡️ Slide R</option>
+            <option value="effect-slideUp">⬆️ Slide Up</option>
+            <option value="effect-zoom">🔍 Zoom</option>
+            <option value="effect-flip">🔄 Flip</option>
+            <option value="effect-rotate">🌀 Rotate</option>
+            <option value="effect-blur">💨 Blur</option>
+          </optgroup>
+          <optgroup id="grpLoop">
+            <option value="effect-shake">🫨 Shake</option>
+            <option value="effect-swing">🎐 Swing</option>
+            <option value="effect-wobble">🐧 Wobble</option>
+            <option value="effect-wave">🌊 Wave</option>
+            <option value="effect-heartBeat">💗 HeartBeat</option>
+          </optgroup>
+          <optgroup id="grpGlow">
+            <option value="effect-glow">🌟 Glow</option>
+            <option value="effect-neon">💡 Neon</option>
+            <option value="effect-rainbow">🌈 Rainbow</option>
+            <option value="effect-glitch">📺 Glitch</option>
+          </optgroup>
+          <optgroup id="grpSpecial">
+            <option value="effect-tada">🎉 Tada</option>
+            <option value="effect-rubberBand">🎗️ Rubber</option>
+          </optgroup>
+        </select>
+        <label id="lblParticles"></label>
+        <select id="particles" onchange="render()">
+          <option value="" id="optParticlesNone"></option>
+          <option value="🎉">🎉</option><option value="❄️">❄️</option><option value="🌸">🌸</option>
+          <option value="⭐">⭐</option><option value="❤️">❤️</option><option value="🎈">🎈</option>
+          <option value="🍁">🍁</option><option value="💎">💎</option><option value="🍀">🍀</option>
+          <option value="🌈">🌈</option><option value="👻">👻</option><option value="🎆">🎆</option>
+        </select>
+        <label id="lblPhysics"></label>
+        <select id="physicsMode" onchange="render()">
+          <option value="fall">⬇️ Падение</option>
+          <option value="fountain">⛲ Фонтан</option>
+          <option value="explosion">💥 Взрыв</option>
+          <option value="spiral">🌀 Спираль</option>
+          <option value="gravity">🪐 Гравитация</option>
+          <option value="magnet">🧲 Магнит</option>
+          <option value="repel">🚫 Отталкивание</option>
+          <option value="snow">❄️ Снег</option>
+        </select>
+        <label><span id="lblPartIntensity"></span>: <span id="partVal">8</span></label>
+        <input type="range" id="partCount" min="0" max="30" value="8" oninput="partVal.textContent=this.value;render()">
+        <label id="lblPartSpeed"></label>
+        <select id="partSpeed" onchange="render()">
+          <option value="1" id="optSpeedSlow"></option>
+          <option value="2" selected id="optSpeedNormal"></option>
+          <option value="3" id="optSpeedFast"></option>
+          <option value="4" id="optSpeedVeryFast"></option>
+        </select>
+        <label id="lblGlow"></label>
+        <select id="glow" onchange="render()">
+          <option value="" id="optGlowNone"></option>
+          <option value="0 0 40px rgba(255,255,255,.8)" id="optGlowWhite"></option>
+          <option value="0 0 40px rgba(255,107,107,.8)" id="optGlowRed"></option>
+          <option value="0 0 40px rgba(107,255,156,.8)" id="optGlowGreen"></option>
+          <option value="0 0 40px rgba(107,156,255,.8)" id="optGlowBlue"></option>
+          <option value="0 0 40px rgba(255,215,0,.9)" id="optGlowGold"></option>
+          <option value="0 0 60px rgba(255,107,255,.9)" id="optGlowPink"></option>
+        </select>
+      </div>
+
+      <div id="tab-media" class="hidden">
+        <label id="lblMusic"></label><input id="musicUrl">
+        <label id="lblImage"></label><input id="imageUrl" oninput="render()">
+        <label><span id="lblImgSize"></span>: <span id="imgSizeVal">120</span>px</label>
+        <input type="range" id="imgSize" min="40" max="300" value="120" oninput="imgSizeVal.textContent=this.value;render()">
+        <label id="lblVideo"></label><input id="videoUrl" oninput="render()">
+        <label id="lblPopularStickers"></label><div class="gif-grid" id="gifGrid"></div>
+      </div>
+
+      <div id="tab-extras" class="hidden">
+        <label id="lblVoice"></label>
+        <select id="voiceLang" style="margin-bottom:8px">
+          <option value="ru-RU">Русский</option>
+          <option value="en-US">English US</option>
+          <option value="en-GB">English UK</option>
+          <option value="de-DE">Deutsch</option>
+          <option value="fr-FR">Français</option>
+          <option value="es-ES">Español</option>
+          <option value="it-IT">Italiano</option>
+          <option value="uk-UA">Українська</option>
+          <option value="ja-JP">日本語</option>
+          <option value="zh-CN">中文</option>
+        </select>
+        <label><span id="lblRate"></span>: <span id="speakRateVal">1</span>x</label>
+        <input type="range" id="speakRate" min=".5" max="2" step=".1" value="1" oninput="speakRateVal.textContent=this.value">
+        <label><span id="lblPitch"></span>: <span id="speakPitchVal">1</span></label>
+        <input type="range" id="speakPitch" min=".5" max="2" step=".1" value="1" oninput="speakPitchVal.textContent=this.value">
+        <button class="secondary" onclick="speak()" id="btnSpeak"></button>
+        <button class="ghost" onclick="stopSpeak()" id="btnStopSpeak"></button>
+        <hr style="margin:15px 0;border:none;border-top:2px solid var(--b)">
+        <label id="lblCountdown"></label>
+        <input type="datetime-local" id="countdownTarget" oninput="renderCountdown()">
+        <div class="countdown-display" id="countdownDisplay">-- : -- : --</div>
+        <hr style="margin:15px 0;border:none;border-top:2px solid var(--b)">
+        <label id="lblGiftWrap"></label>
+        <select id="giftWrap" onchange="render()">
+          <option value="" id="optGiftNone"></option>
+          <option value="🎁" id="optGiftPresent"></option>
+          <option value="💌" id="optGiftLetter"></option>
+          <option value="🎊" id="optGiftCracker"></option>
+          <option value="📦" id="optGiftBox"></option>
+        </select>
+        <hr style="margin:15px 0;border:none;border-top:2px solid var(--b)">
+        <label id="lblLangTemplate"></label><div class="lang-selector" id="langSelector"></div>
+        <hr style="margin:15px 0;border:none;border-top:2px solid var(--b)">
+        <label id="lblHotkeys"></label>
+        <div style="font-size:12px;color:var(--tm);line-height:1.8">
+          <div><span class="kbd">Ctrl</span>+<span class="kbd">C</span> — <span id="hkCopy"></span></div>
+          <div><span class="kbd">Ctrl</span>+<span class="kbd">S</span> — <span id="hkHTML"></span></div>
+          <div><span class="kbd">Ctrl</span>+<span class="kbd">P</span> — <span id="hkPDF"></span></div>
+          <div><span class="kbd">Ctrl</span>+<span class="kbd">R</span> — <span id="hkRandom"></span></div>
+          <div><span class="kbd">Ctrl</span>+<span class="kbd">F</span> — <span id="hkFullscreen"></span></div>
+          <div><span class="kbd">Esc</span> — <span id="hkEsc"></span></div>
+        </div>
+      </div>
+
+      <hr style="margin:20px 0;border:none;border-top:2px solid var(--b)">
+      <button class="secondary" onclick="playMusic()" id="btnMusic"></button>
+      <button class="ghost" onclick="stopMusic()">⏹️</button>
+      <button class="ghost" onclick="saveAsDraft()" id="btnDraftSave"></button>
+      <button class="ghost" onclick="loadDraft()" id="btnDraftLoad"></button>
+    </div>
+
+    <div class="panel">
+      <h2><span id="previewTitle"></span><button class="mini ghost" onclick="showFullscreen()" id="btnExpand"></button></h2>
+      <div class="preview-wrap">
+        <div class="preview" id="preview">
+          <div class="blocks" id="previewBlocks"></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button onclick="copyText()" id="btnCopy"></button>
+        <button class="secondary" onclick="downloadHTML()" id="btnHTML"></button>
+        <button class="ghost" onclick="downloadImage()" id="btnPNG"></button>
+        <button class="ghost" onclick="exportPDF()" id="btnPDF"></button>
+        <button class="ghost" onclick="shareNative()" id="btnShare"></button>
+        <button class="ghost" onclick="openPreviewTab()" id="btnPreviewTab2"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2><span id="historyTitle"></span>
+      <div>
+        <button class="mini ghost" onclick="exportHistory()" id="btnHistoryExport"></button>
+        <button class="mini danger" onclick="clearHistory()" id="btnClearHistory"></button>
+      </div>
+    </h2>
+    <div id="history"></div>
+  </div>
+
+  <div class="panel">
+    <h2 id="importExportTitle"></h2>
+    <button class="secondary" onclick="exportJSON()" id="btnJSON"></button>
+    <button class="ghost" onclick="fileInput.click()" id="btnImportJSON"></button>
+    <button class="ghost" onclick="exportTemplates()" id="btnTemplates"></button>
+    <button class="ghost" onclick="fileInput2.click()" id="btnImportTemplates"></button>
+    <button class="danger" onclick="clearAll()" id="btnClearAll"></button>
+    <input type="file" id="fileInput" accept=".json" style="display:none" onchange="importJSON(event)">
+    <input type="file" id="fileInput2" accept=".json" style="display:none" onchange="importTemplates(event)">
+  </div>
+</div>
+
+<div class="fullscreen-preview" id="fullscreen">
+  <button class="fullscreen-close" onclick="hideFullscreen()">✕</button>
+  <div class="preview" id="fullPreview"></div>
+</div>
+
+<div class="modal" id="qrModal"><div class="modal-content">
+  <h3 id="qrTitle"></h3><p id="qrSubtitle" style="color:var(--tm);font-size:13px;margin-bottom:12px"></p>
+  <div style="text-align:center"><div class="qr-container"><canvas id="qrCanvas" width="240" height="240"></canvas></div></div>
+  <div style="text-align:center;margin-top:15px">
+    <button class="secondary" onclick="downloadQR()" id="btnDownloadQR"></button>
+    <button class="ghost" onclick="closeModal('qrModal')" id="btnQRClose"></button>
+  </div>
+</div></div>
+
+<div class="modal" id="themeModal"><div class="modal-content">
+  <h3>🎨 Тема интерфейса</h3>
+  <div class="theme-grid" id="themeModalGrid"></div>
+  <div style="text-align:center;margin-top:15px">
+    <button class="ghost" onclick="closeModal('themeModal')">Закрыть</button>
+  </div>
+</div></div>
+
+<audio id="musicPlayer" loop></audio>
+<div class="toast" id="toast"><span class="toast-icon" id="toastIcon"></span><span id="toastText"></span></div>
+<canvas id="confettiCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:998;display:none"></canvas>
+
+<script src="script.js"></script>
+</body>
+</html>
