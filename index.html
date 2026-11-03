@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NekoStore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#3b5ba9;--on-primary:#fff;--primary-c:#dbe1ff;--on-primary-c:#00164e;
+  --secondary-c:#dde1f9;--on-secondary-c:#161b2c;
+  --surface:#fbf8fd;--surface-c:#efedf2;--surface-ch:#e9e7ec;--surface-chh:#e3e1e6;
+  --on-surface:#1b1b1f;--on-surface-v:#45464f;--outline:#757780;--outline-v:#c5c6d0;
+  --error-c:#ffdad6;--on-error-c:#410002;
+}
+@media (prefers-color-scheme:dark){:root{
+  --primary:#b4c5ff;--on-primary:#0d2b78;--primary-c:#274190;--on-primary-c:#dbe1ff;
+  --secondary-c:#424659;--on-secondary-c:#dde1f9;
+  --surface:#121317;--surface-c:#1e1f23;--surface-ch:#292a2e;--surface-chh:#343439;
+  --on-surface:#e3e2e6;--on-surface-v:#c5c6d0;--outline:#8f909a;--outline-v:#45464f;
+  --error-c:#93000a;--on-error-c:#ffdad6;
+}}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{font-family:"Roboto Flex",system-ui,sans-serif;background:var(--surface);color:var(--on-surface);
+  min-height:100%;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);line-height:1.45}
+.wrap{max-width:720px;margin:0 auto;padding:16px 16px 48px}
+header{padding:20px 4px 12px}
+header h1{font-size:2rem;font-weight:600;letter-spacing:-.01em}
+header p{color:var(--on-surface-v);font-size:.9rem;margin-top:2px}
+.search{position:sticky;top:0;z-index:5;padding:8px 0 12px;background:var(--surface)}
+.search label{display:flex;align-items:center;gap:12px;background:var(--surface-ch);border-radius:28px;padding:0 20px;height:56px}
+.search svg{flex:none;fill:var(--on-surface-v)}
+.search input{flex:1;border:0;background:none;font:inherit;font-size:1rem;color:var(--on-surface);outline:0;min-width:0}
+.search input::placeholder{color:var(--on-surface-v)}
+.search label:focus-within{outline:2px solid var(--primary)}
+.banner{background:var(--secondary-c);color:var(--on-secondary-c);border-radius:16px;padding:12px 16px;font-size:.85rem;margin-bottom:12px}
+.banner.err{background:var(--error-c);color:var(--on-error-c)}
+.banner code{font-family:ui-monospace,monospace;font-size:.85em}
+.list{display:flex;flex-direction:column;gap:8px}
+.card{display:flex;align-items:center;gap:16px;background:var(--surface-c);border-radius:24px;padding:14px 14px 14px 16px;cursor:pointer;border:0;text-align:left;width:100%;font:inherit;color:inherit}
+.card:hover{background:var(--surface-ch)}
+.card:focus-visible{outline:2px solid var(--primary)}
+.icon{flex:none;width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-size:1.5rem;font-weight:600}
+.meta{flex:1;min-width:0}
+.meta b{display:block;font-weight:600;font-size:1.05rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta span{display:block;color:var(--on-surface-v);font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{flex:none;border:0;border-radius:20px;height:40px;padding:0 20px;font:inherit;font-weight:500;font-size:.9rem;
+  background:var(--primary);color:var(--on-primary);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.tonal{background:var(--secondary-c);color:var(--on-secondary-c)}
+.btn:hover{filter:brightness(1.08)}
+.btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.empty,.loading{text-align:center;color:var(--on-surface-v);padding:48px 16px}
+.spin{width:36px;height:36px;border-radius:50%;border:4px solid var(--outline-v);border-top-color:var(--primary);margin:0 auto 16px;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+dialog{border:0;padding:0;background:var(--surface);color:var(--on-surface);width:100%;max-width:720px;max-height:88vh;
+  margin:auto auto 0;border-radius:28px 28px 0 0;overflow:auto}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog[open]{animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@media (prefers-reduced-motion:reduce){dialog[open],.spin{animation:none}}
+.sheet{padding:12px 20px calc(28px + env(safe-area-inset-bottom))}
+.grab{width:32px;height:4px;border-radius:2px;background:var(--outline-v);margin:0 auto 16px}
+.head{display:flex;gap:16px;align-items:center;margin-bottom:16px}
+.head .icon{width:72px;height:72px;border-radius:24px;font-size:2rem}
+.head h2{font-size:1.4rem;font-weight:600}
+.head p{color:var(--on-surface-v);font-size:.85rem}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{background:var(--surface-ch);border-radius:10px;padding:6px 12px;font-size:.8rem;color:var(--on-surface-v)}
+.chip.pre{background:var(--primary-c);color:var(--on-primary-c)}
+.notes{background:var(--surface-c);border-radius:20px;padding:14px 16px;font-size:.9rem;white-space:pre-wrap;word-break:break-word;margin-bottom:20px;color:var(--on-surface-v)}
+h3{font-size:1rem;font-weight:600;margin:4px 0 10px}
+.ver{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--outline-v)}
+.ver:first-of-type{border-top:0}
+.ver div{flex:1;min-width:0}
+.ver b{font-weight:500;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ver small{color:var(--on-surface-v);font-size:.78rem}
+.close{display:flex;justify-content:center;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 id="title">Магазин</h1>
+    <p id="sub"></p>
+  </header>
+  <div class="search">
+    <label>
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 14 15.5l.3.3v.8l5 5 1.5-1.5-5-5zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/></svg>
+      <input id="q" type="search" placeholder="Поиск приложений" autocomplete="off" aria-label="Поиск приложений">
+    </label>
+  </div>
+  <div id="msg"></div>
+  <div id="list" class="list"></div>
+</div>
+<dialog id="dlg"><div class="sheet" id="sheet"></div></dialog>
+
+<script>
+/* ====== НАСТРОЙКА: впиши свой репозиторий ====== */
+const REPO = "nikkraft/Nikkraft.github.io";
+/* Можно и без правки файла: index.html?repo=owner/repo */
+/* ================================================ */
+
+const repo = new URLSearchParams(location.search).get("repo") || REPO;
+const isPlaceholder = repo === "owner/repo";
+let apps = [];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmtSize = b => b > 1048576 ? (b/1048576).toFixed(1)+" МБ" : Math.max(1,Math.round(b/1024))+" КБ";
+const fmtDate = d => new Date(d).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"});
+
+// Имя приложения из имени файла: "MyApp-v1.2.3.apk" -> "MyApp"
+function baseName(file){
+  let n = file.replace(/\.[^.]+$/,"");
+  n = n.replace(/[-_ .]?v?\d+(\.\d+)+.*$/i,"").replace(/[-_ .](release|debug|universal|arm64.*|armeabi.*|x86.*)$/i,"");
+  const r=(n||"").replace(/[-_]+/g," ").trim();
+  return r || file.replace(/\.[^.]+$/,"") || file;
+}
+const letter=n=>(Array.from(String(n).trim())[0]||"?").toUpperCase();
+function hue(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return h}
+
+function build(releases){
+  const map = new Map();
+  for(const r of releases){
+    if(r.draft) continue;
+    for(const a of (r.assets||[])){
+      const name = baseName(a.name), key = name.toLowerCase();
+      if(!map.has(key)) map.set(key,{name,versions:[]});
+      map.get(key).versions.push({
+        tag:r.tag_name, title:r.name||r.tag_name, date:r.published_at, notes:r.body||"",
+        pre:r.prerelease, file:a.name, size:a.size, dl:a.download_count, url:a.browser_download_url
+      });
+    }
+  }
+  const out=[...map.values()];
+  out.forEach(a=>a.versions.sort((x,y)=>new Date(y.date)-new Date(x.date)));
+  out.sort((x,y)=>new Date(y.versions[0].date)-new Date(x.versions[0].date));
+  return out;
+}
+
+function iconStyle(name){
+  const h=hue(name);
+  return `background:hsl(${h} 70% 88%);color:hsl(${h} 60% 25%)`;
+}
+
+function render(){
+  const q=$("q").value.trim().toLowerCase();
+  const items=apps.filter(a=>a.name.toLowerCase().includes(q));
+  $("list").innerHTML = items.length ? items.map((a,i)=>{
+    const v=a.versions[0];
+    return `<button class="card" data-i="${apps.indexOf(a)}">
+      <div class="icon" style="${iconStyle(a.name)}">${esc(letter(a.name))}</div>
+      <div class="meta"><b>${esc(a.name)}</b><span>${esc(v.tag)} · ${fmtSize(v.size)}</span></div>
+      <span class="btn">Скачать</span></button>`;
+  }).join("") : `<div class="empty">${apps.length?"Ничего не найдено. Попробуй другое название.":"Здесь пока пусто. Создай релиз в репозитории и прикрепи к нему APK — он появится тут."}</div>`;
+}
+
+function open(i){
+  const a=apps[i], v=a.versions[0];
+  const total=a.versions.reduce((s,x)=>s+(x.dl||0),0);
+  $("sheet").innerHTML = `<div class="grab"></div>
+    <div class="head"><div class="icon" style="${iconStyle(a.name)}">${esc(letter(a.name))}</div>
+      <div><h2>${esc(a.name)}</h2><p>Обновлено ${fmtDate(v.date)}</p></div></div>
+    <div class="stats">
+      <span class="chip">${esc(v.tag)}</span>
+      <span class="chip">${fmtSize(v.size)}</span>
+      <span class="chip">${total} скачиваний</span>
+      ${v.pre?'<span class="chip pre">Пре-релиз</span>':""}
+    </div>
+    <a class="btn" style="width:100%;height:48px;border-radius:24px;margin-bottom:20px" href="${esc(v.url)}">Скачать ${esc(v.tag)}</a>
+    ${v.notes.trim()?`<h3>Что нового</h3><div class="notes">${esc(v.notes.trim())}</div>`:""}
+    <h3>Все версии</h3>
+    ${a.versions.map(x=>`<div class="ver"><div><b>${esc(x.tag)}${x.pre?" · пре-релиз":""}</b>
+      <small>${fmtDate(x.date)} · ${fmtSize(x.size)} · ${esc(x.file)}</small></div>
+      <a class="btn tonal" href="${esc(x.url)}">Скачать</a></div>`).join("")}
+    <div class="close"><button class="btn tonal" id="x">Закрыть</button></div>`;
+  $("dlg").showModal();
+  $("x").onclick=()=>$("dlg").close();
+}
+
+$("list").addEventListener("click",e=>{const c=e.target.closest(".card");if(c)open(+c.dataset.i)});
+$("dlg").addEventListener("click",e=>{if(e.target===$("dlg"))$("dlg").close()});
+$("q").addEventListener("input",render);
+
+const demo=()=>build([
+  {tag_name:"v2.1.0",name:"2.1.0",published_at:"2026-10-28T10:00:00Z",body:"Исправлены ошибки\nУскорен запуск",assets:[{name:"Calc-2.1.0.apk",size:6291456,download_count:128,browser_download_url:"#"}]},
+  {tag_name:"v2.0.0",name:"2.0.0",published_at:"2026-10-10T10:00:00Z",body:"Новый интерфейс",assets:[{name:"Calc-2.0.0.apk",size:5976883,download_count:310,browser_download_url:"#"}]},
+  {tag_name:"v1.4",name:"1.4",published_at:"2026-10-20T10:00:00Z",body:"Тёмная тема",assets:[{name:"Notes-1.4.apk",size:3145728,download_count:54,browser_download_url:"#"}]}
+]);
+
+async function init(){
+  $("title").textContent = "NekoStore";
+  $("sub").textContent = isPlaceholder ? "Приложения из GitHub Releases" : "Приложения из "+repo;
+  $("list").innerHTML='<div class="loading"><div class="spin"></div>Загружаю релизы…</div>';
+  if(isPlaceholder){
+    apps=demo();
+    $("msg").innerHTML='<div class="banner">Показаны демо-данные. Впиши свой репозиторий в строке <code>const REPO</code> в index.html или открой страницу с <code>?repo=логин/репозиторий</code>.</div>';
+    return render();
+  }
+  try{
+    const r=await fetch(`https://api.github.com/repos/${repo}/releases?per_page=100`,{headers:{Accept:"application/vnd.github+json"}});
+    if(!r.ok) throw new Error(r.status===404?"Репозиторий не найден или он приватный.":r.status===403?"Лимит запросов GitHub исчерпан. Попробуй позже.":"Ошибка GitHub: "+r.status);
+    apps=build(await r.json());
+    render();
+  }catch(e){
+    $("list").innerHTML="";
+    $("msg").innerHTML=`<div class="banner err">${esc(e.message||"Не удалось загрузить релизы.")} Проверь название репозитория и интернет.</div>`;
+  }
+}
+init();
+</script>
+</body>
+</html>
