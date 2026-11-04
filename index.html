@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NekoStore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#3b5ba9;--on-primary:#fff;--primary-c:#dbe1ff;--on-primary-c:#00164e;
+  --secondary-c:#dde1f9;--on-secondary-c:#161b2c;
+  --surface:#fbf8fd;--surface-c:#efedf2;--surface-ch:#e9e7ec;--surface-chh:#e3e1e6;
+  --on-surface:#1b1b1f;--on-surface-v:#45464f;--outline:#757780;--outline-v:#c5c6d0;
+  --error-c:#ffdad6;--on-error-c:#410002;
+  --pad:14px;--icon:56px;--gap:8px;
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --surface:#121317;--surface-c:#1e1f23;--surface-ch:#292a2e;--surface-chh:#343439;
+  --on-surface:#e3e2e6;--on-surface-v:#c5c6d0;--outline:#8f909a;--outline-v:#45464f;
+  --error-c:#93000a;--on-error-c:#ffdad6;color-scheme:dark;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]):not([data-theme="dark"]){
+  --surface:#121317;--surface-c:#1e1f23;--surface-ch:#292a2e;--surface-chh:#343439;
+  --on-surface:#e3e2e6;--on-surface-v:#c5c6d0;--outline:#8f909a;--outline-v:#45464f;
+  --error-c:#93000a;--on-error-c:#ffdad6;color-scheme:dark;
+}}
+:root[data-density="compact"]{--pad:8px;--icon:44px;--gap:4px}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{font-family:"Roboto Flex",system-ui,sans-serif;background:var(--surface);color:var(--on-surface);
+  min-height:100%;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);line-height:1.45}
+.wrap{max-width:720px;margin:0 auto;padding:16px 16px 48px}
+header{padding:20px 4px 12px;display:flex;align-items:flex-start;gap:8px}
+header .t{flex:1;min-width:0}
+header h1{font-size:2rem;font-weight:600;letter-spacing:-.01em}
+header p{color:var(--on-surface-v);font-size:.9rem;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ib{flex:none;width:48px;height:48px;border-radius:50%;border:0;background:var(--surface-ch);color:var(--on-surface-v);cursor:pointer;display:grid;place-items:center}
+.ib:hover{background:var(--surface-chh)}
+.ib:focus-visible{outline:2px solid var(--primary)}
+.ib svg{fill:currentColor}
+.search{position:sticky;top:0;z-index:5;padding:8px 0 12px;background:var(--surface)}
+.search label{display:flex;align-items:center;gap:12px;background:var(--surface-ch);border-radius:28px;padding:0 20px;height:56px}
+.search svg{flex:none;fill:var(--on-surface-v)}
+.search input{flex:1;border:0;background:none;font:inherit;font-size:1rem;color:var(--on-surface);outline:0;min-width:0}
+.search input::placeholder{color:var(--on-surface-v)}
+.search label:focus-within{outline:2px solid var(--primary)}
+.banner{background:var(--secondary-c);color:var(--on-secondary-c);border-radius:16px;padding:12px 16px;font-size:.85rem;margin-bottom:12px}
+.banner.err{background:var(--error-c);color:var(--on-error-c)}
+.banner code{font-family:ui-monospace,monospace;font-size:.85em}
+.list{display:flex;flex-direction:column;gap:var(--gap)}
+.card{display:flex;align-items:center;gap:16px;background:var(--surface-c);border-radius:24px;padding:var(--pad) 14px var(--pad) 16px;cursor:pointer;border:0;text-align:left;width:100%;font:inherit;color:inherit}
+.card:hover{background:var(--surface-ch)}
+.card:focus-visible{outline:2px solid var(--primary)}
+.icon{flex:none;width:var(--icon);height:var(--icon);border-radius:30%;display:grid;place-items:center;font-size:1.5rem;font-weight:600;overflow:hidden}
+.icon img{width:100%;height:100%;object-fit:cover;display:block}
+.meta{flex:1;min-width:0}
+.meta b{display:block;font-weight:600;font-size:1.05rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta span{display:block;color:var(--on-surface-v);font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{flex:none;border:0;border-radius:20px;height:40px;padding:0 20px;font:inherit;font-weight:500;font-size:.9rem;
+  background:var(--primary);color:var(--on-primary);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.tonal{background:var(--secondary-c);color:var(--on-secondary-c)}
+.btn.block{width:100%;height:48px;border-radius:24px}
+.btn:hover{filter:brightness(1.08)}
+.btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.empty,.loading{text-align:center;color:var(--on-surface-v);padding:48px 16px}
+.spin{width:36px;height:36px;border-radius:50%;border:4px solid var(--outline-v);border-top-color:var(--primary);margin:0 auto 16px;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+dialog{border:0;padding:0;background:var(--surface);color:var(--on-surface);width:100%;max-width:720px;max-height:88vh;
+  margin:auto auto 0;border-radius:28px 28px 0 0;overflow:auto}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog[open]{animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@media (prefers-reduced-motion:reduce){dialog[open],.spin{animation:none}}
+.sheet{padding:12px 20px calc(28px + env(safe-area-inset-bottom))}
+.grab{width:32px;height:4px;border-radius:2px;background:var(--outline-v);margin:0 auto 16px}
+.head{display:flex;gap:16px;align-items:center;margin-bottom:16px}
+.head .icon{width:72px;height:72px;font-size:2rem}
+.head h2{font-size:1.4rem;font-weight:600}
+.head p{color:var(--on-surface-v);font-size:.85rem}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{background:var(--surface-ch);border-radius:10px;padding:6px 12px;font-size:.8rem;color:var(--on-surface-v)}
+.chip.pre{background:var(--primary-c);color:var(--on-primary-c)}
+.notes{background:var(--surface-c);border-radius:20px;padding:14px 16px;font-size:.9rem;white-space:pre-wrap;word-break:break-word;margin-bottom:20px;color:var(--on-surface-v)}
+h3{font-size:1rem;font-weight:600;margin:4px 0 10px}
+.ver{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--outline-v)}
+.ver:first-of-type{border-top:0}
+.ver div{flex:1;min-width:0}
+.ver b{font-weight:500;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ver small{color:var(--on-surface-v);font-size:.78rem}
+.close{display:flex;justify-content:center;margin-top:16px}
+/* settings */
+.sec{margin-bottom:22px}
+.sec h3{color:var(--primary);font-size:.9rem;margin-bottom:10px}
+.row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.row .lbl{flex:1;min-width:0}
+.row .lbl b{display:block;font-weight:500}
+.row .lbl small{color:var(--on-surface-v);font-size:.8rem}
+.seg{display:flex;border:1px solid var(--outline);border-radius:20px;overflow:hidden;width:100%}
+.seg button{flex:1;height:40px;border:0;border-left:1px solid var(--outline);background:none;color:var(--on-surface);font:inherit;font-size:.85rem;cursor:pointer;padding:0 6px}
+.seg button:first-child{border-left:0}
+.seg button[aria-pressed="true"]{background:var(--secondary-c);color:var(--on-secondary-c);font-weight:600}
+.seg button:focus-visible{outline:2px solid var(--primary);outline-offset:-2px}
+.lbl2{font-size:.85rem;color:var(--on-surface-v);margin:0 0 6px 4px;display:block}
+.sw{flex:none;width:52px;height:32px;border-radius:16px;border:2px solid var(--outline);background:var(--surface-chh);position:relative;cursor:pointer;padding:0}
+.sw::after{content:"";position:absolute;top:6px;left:6px;width:16px;height:16px;border-radius:50%;background:var(--outline);transition:.15s}
+.sw[aria-checked="true"]{background:var(--primary);border-color:var(--primary)}
+.sw[aria-checked="true"]::after{left:26px;top:4px;width:24px;height:24px;background:var(--on-primary)}
+.sw:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.sw[aria-checked="true"]::after{left:22px}
+.swatches{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.sat{width:44px;height:44px;border-radius:50%;border:3px solid transparent;cursor:pointer;padding:0;outline:0}
+.sat[aria-pressed="true"]{border-color:var(--on-surface);box-shadow:inset 0 0 0 3px var(--surface)}
+.sat:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.fld{display:flex;gap:8px}
+.fld input{flex:1;min-width:0;height:48px;border-radius:12px;border:1px solid var(--outline);background:none;color:var(--on-surface);font:inherit;padding:0 14px;outline:0}
+.fld input:focus{border:2px solid var(--primary);padding:0 13px}
+.hint{font-size:.8rem;color:var(--on-surface-v);margin:6px 4px 0}
+.hint.bad{color:var(--primary)}
+#tabs{margin:0 0 12px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;pointer-events:none;
+  background:#303034;color:#f2f0f4;border-radius:12px;padding:12px 18px;font-size:.9rem;max-width:calc(100% - 32px);z-index:50;transition:.2s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.chip.ok{background:var(--secondary-c);color:var(--on-secondary-c)}
+/* about */
+.who{text-align:center;padding:8px 0 20px}
+.ava{width:96px;height:96px;border-radius:50%;margin:0 auto 12px;display:grid;place-items:center;font-size:2.6rem;font-weight:600;background:var(--primary-c);color:var(--on-primary-c);overflow:hidden}
+.ava img{width:100%;height:100%;object-fit:cover;display:block}
+.who h2{font-size:1.5rem;font-weight:600}
+.who p{color:var(--on-surface-v);font-size:.95rem;margin-top:6px}
+.links{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.link{display:flex;align-items:center;justify-content:space-between;background:var(--surface-c);border-radius:20px;padding:14px 18px;text-decoration:none;color:var(--on-surface);font-weight:500}
+.link small{color:var(--on-surface-v);font-weight:400}
+.link:hover{background:var(--surface-ch)}
+.link:focus-visible{outline:2px solid var(--primary)}
+.ver-line{text-align:center;color:var(--on-surface-v);font-size:.8rem;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="t">
+      <h1>NekoStore</h1>
+      <p id="sub"></p>
+    </div>
+    <button class="ib" id="bAbout" aria-label="Об авторе"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z"/></svg></button>
+    <button class="ib" id="bSet" aria-label="Настройки"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.3h-4l-.4 2.6c-.6.3-1.2.6-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1c.5.4 1.1.8 1.7 1l.4 2.6h4l.4-2.6c.6-.3 1.2-.6 1.7-1l2.5 1 2-3.5L19.4 13zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 .7)"/></svg></button>
+  </header>
+  <div class="search">
+    <label>
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 14 15.5l.3.3v.8l5 5 1.5-1.5-5-5zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/></svg>
+      <input id="q" type="search" placeholder="Поиск приложений" autocomplete="off" aria-label="Поиск приложений">
+    </label>
+  </div>
+  <div class="seg" id="tabs"><button data-t="all" aria-pressed="true">Все</button><button data-t="upd" aria-pressed="false">Обновления</button></div>
+  <div id="msg"></div>
+  <div id="list" class="list"></div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<dialog id="dlg"><div class="sheet" id="sheet"></div></dialog>
+
+<script>
+/* ============ НАСТРОЙКА АВТОРА И РЕПОЗИТОРИЯ ============ */
+const REPO = "nikkraft/Nikkraft.github.io";   // репозиторий по умолчанию
+const STORE_VERSION = "1.3";
+const AUTHOR = {
+  name: "nikkraft",
+  bio: "Автор NekoStore — каталога приложений из GitHub Releases.",
+  avatar: "https://github.com/nikkraft.png",   // можно убрать — будет буква
+  links: [
+    {title: "GitHub", url: "https://github.com/nikkraft"}
+    // добавь свои: {title: "Telegram", url: "https://t.me/твой_ник"}
+  ],
+  support: ""   // ссылка для «Поддержать автора» (Boosty, DonationAlerts…). Пусто — кнопка скрыта
+};
+/* ======================================================== */
+
+const HUES = [["Синий",222],["Бирюзовый",180],["Зелёный",145],["Оранжевый",25],["Розовый",335],["Фиолетовый",275]];
+const DEF = {theme:"auto",hue:222,density:"comfortable",sort:"date",meta:true,repo:"",icons:true,notify:false,every:15};
+let S = {...DEF};
+try{ Object.assign(S, JSON.parse(localStorage.getItem("nekostore")||"{}")); }catch(e){}
+if(!["date","name"].includes(S.sort)) S.sort="date";
+const save=()=>{try{localStorage.setItem("nekostore",JSON.stringify(S))}catch(e){}};
+const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmtSize = b => b > 1048576 ? (b/1048576).toFixed(1)+" МБ" : Math.max(1,Math.round(b/1024))+" КБ";
+const fmtDate = d => new Date(d).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"});
+const letter = n => (Array.from(String(n).trim())[0]||"?").toUpperCase();
+const fv = v => /^\d/.test(v) ? "v"+v : v;
+const keyOf = a => a.name.toLowerCase();
+/* Мост с Android-приложением (в обычном браузере его нет) */
+const APP = window.NekoApp || null;
+const post = o => {try{APP.postMessage(JSON.stringify(o))}catch(e){}};
+const askPerm = () => new Promise(res=>{window.nekoPerm=res;post({type:"perm"})});
+
+const param = new URLSearchParams(location.search).get("repo");
+const curRepo = () => param || S.repo || REPO;
+let apps = [], tab = "all", timer = null, lastLoad = 0;
+
+function toast(msg){
+  const t=$("toast"); t.textContent=msg; t.classList.add("on");
+  clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove("on"),3500);
+}
+
+/* ---------- тема и акцент ---------- */
+const mq = matchMedia("(prefers-color-scheme: dark)");
+function applyLook(){
+  const root=document.documentElement;
+  if(S.theme==="auto") root.removeAttribute("data-theme"); else root.setAttribute("data-theme",S.theme);
+  root.setAttribute("data-density",S.density);
+  const dark = S.theme==="dark" || (S.theme==="auto" && mq.matches), h=S.hue;
+  const v = dark ? {
+    "--primary":`hsl(${h} 100% 85%)`,"--on-primary":`hsl(${h} 70% 22%)`,
+    "--primary-c":`hsl(${h} 50% 33%)`,"--on-primary-c":`hsl(${h} 100% 91%)`,
+    "--secondary-c":`hsl(${h} 15% 30%)`,"--on-secondary-c":`hsl(${h} 30% 89%)`
+  } : {
+    "--primary":`hsl(${h} 45% 40%)`,"--on-primary":"#fff",
+    "--primary-c":`hsl(${h} 100% 91%)`,"--on-primary-c":`hsl(${h} 100% 15%)`,
+    "--secondary-c":`hsl(${h} 30% 89%)`,"--on-secondary-c":`hsl(${h} 30% 15%)`
+  };
+  for(const k in v) root.style.setProperty(k,v[k]);
+}
+mq.addEventListener("change",applyLook);
+applyLook();
+
+/* ---------- имя файла -> название и версия ---------- */
+function parseFile(file, tag){
+  const stem = file.replace(/\.[^.]+$/,"");
+  const m = stem.match(/(?:^|[-_ ])(v?\d+(?:\.\d+)+(?:[-_.+]?(?:alpha|beta|rc|dev|b)\.?\d*)?)(?=$|[-_ ])/i)
+         || stem.match(/[-_ ](v\d+)(?=$|[-_ ])/i);
+  const clean = n => n.replace(/[-_]+/g," ").replace(/\s+(release|debug|universal|arm64[\w ]*|armeabi[\w ]*|x86[\w ]*)$/i,"").trim();
+  if(m){
+    return {name: clean(stem.slice(0,m.index)) || stem, ver: m[1].replace(/^v/i,"")};
+  }
+  return {name: clean(stem) || file, ver: String(tag||"").replace(/^v/i,"")};
+}
+function cmpVer(a,b){
+  const x=String(a).match(/\d+/g)||[], y=String(b).match(/\d+/g)||[];
+  for(let i=0;i<Math.max(x.length,y.length);i++){const d=(+x[i]||0)-(+y[i]||0);if(d)return d>0?1:-1}
+  return 0;
+}
+const hue = s => {let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return h};
+const iconStyle = name => {const h=hue(name);return `background:hsl(${h} 70% 88%);color:hsl(${h} 60% 25%)`};
+
+const SKIP = /\.(sha\d*|sig|asc|txt|md|json|ya?ml|blockmap|sbom)$/i, IMG = /\.(png|webp|jpe?g)$/i;
+const norm = s => s.toLowerCase().replace(/[^a-z0-9а-яё]+/g,"");
+
+function build(releases){
+  const map = new Map();
+  for(const r of releases){
+    if(r.draft) continue;
+    const imgs=(r.assets||[]).filter(a=>IMG.test(a.name));
+    for(const a of (r.assets||[])){
+      if(SKIP.test(a.name) || IMG.test(a.name)) continue;
+      const p = parseFile(a.name, r.tag_name), key = p.name.toLowerCase();
+      if(!map.has(key)) map.set(key,{name:p.name,versions:[]});
+      map.get(key).versions.push({
+        id:a.id, ver:p.ver, tag:r.tag_name, date:r.published_at, notes:r.body||"",
+        pre:r.prerelease, file:a.name, size:a.size, url:a.browser_download_url,
+        imgs:imgs.map(i=>({name:i.name,url:i.browser_download_url}))
+      });
+    }
+  }
+  const out=[...map.values()];
+  out.forEach(a=>a.versions.sort((x,y)=>new Date(y.date)-new Date(x.date)));
+  attachIcons(out);
+  return out;
+}
+function sorted(list){
+  const l=[...list];
+  if(S.sort==="name") l.sort((x,y)=>x.name.localeCompare(y.name,"ru"));
+  else l.sort((x,y)=>new Date(y.versions[0].date)-new Date(x.versions[0].date));
+  return l;
+}
+
+/* ---------- иконки ---------- */
+function attachIcons(list){
+  for(const a of list){
+    const v=a.versions[0], n=norm(a.name);
+    const img=(v.imgs||[]).find(i=>{const b=norm(i.name.replace(/\.[^.]+$/,""));return b===n||/^(icon|logo|iclauncher)/.test(b)});
+    a.iconUrl = img ? img.url : null;
+    a.icon = ls.get("ico:"+v.id);
+  }
+}
+const iconHtml = a => {
+  const src=a.icon||a.iconUrl;
+  return src ? `<div class="icon"><img src="${esc(src)}" alt="" data-l="${esc(letter(a.name))}" onerror="this.replaceWith(document.createTextNode(this.dataset.l))"></div>`
+             : `<div class="icon" style="${iconStyle(a.name)}">${esc(letter(a.name))}</div>`;
+};
+function scoreIcon(path){
+  const p=path.toLowerCase();
+  if(!p.startsWith("res/") || !/\.(png|webp)$/.test(p)) return -1;
+  const b=p.split("/").pop();
+  if(/foreground|background|monochrome|notification|stat_|splash/.test(b)) return -1;
+  let s;
+  if(/^ic_launcher(_round)?\.(png|webp)$/.test(b)) s=100;
+  else if(/launcher|app_icon|^icon\.|^logo/.test(b)) s=60;
+  else if(p.includes("mipmap")) s=40;
+  else return -1;
+  if(b.includes("_round")) s-=5;
+  const d={xxxhdpi:5,xxhdpi:4,xhdpi:3,hdpi:2,mdpi:1,ldpi:0};
+  const k=Object.keys(d).find(x=>p.includes(x));
+  return s+(k?d[k]:2);
+}
+let zipP=null;
+const loadZip=()=>zipP||(zipP=new Promise((res,rej)=>{
+  if(window.JSZip) return res();
+  const el=document.createElement("script");
+  el.src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+  el.onload=res; el.onerror=()=>{zipP=null;rej(new Error("jszip"))}; document.head.appendChild(el);
+}));
+/* null — иконки в APK нет; undefined — не удалось скачать (повторим позже) */
+async function apkIcon(v){
+  try{
+    await loadZip();
+    const r=await fetch(`https://api.github.com/repos/${curRepo()}/releases/assets/${v.id}`,{headers:{Accept:"application/octet-stream"}});
+    if(!r.ok) return undefined;
+    const zip=await JSZip.loadAsync(await r.arrayBuffer());
+    let best=null,bs=-1;
+    zip.forEach(p=>{const s=scoreIcon(p);if(s>bs){bs=s;best=p}});
+    if(!best) return null;
+    const bmp=await createImageBitmap(await zip.file(best).async("blob"));
+    const c=document.createElement("canvas"); c.width=c.height=96;
+    c.getContext("2d").drawImage(bmp,0,0,96,96);
+    return c.toDataURL("image/png");
+  }catch(e){return undefined}
+}
+const tried=new Set(); let icoBusy=false;
+async function loadIcons(){
+  if(icoBusy||!S.icons) return; icoBusy=true;
+  try{
+    for(const a of apps){
+      const v=a.versions[0];
+      if(a.icon||a.iconUrl||tried.has(v.id)) continue;
+      tried.add(v.id);
+      if(!/\.apk$/i.test(v.file)||v.size>80*1048576||ls.get("icofail:"+v.id)) continue;
+      const data=await apkIcon(v);
+      if(data){a.icon=data;ls.set("ico:"+v.id,data);render()}
+      else if(data===null) ls.set("icofail:"+v.id,"1");
+    }
+  }finally{icoBusy=false}
+}
+
+/* ---------- установленные версии и обновления ---------- */
+const inst=()=>{try{return JSON.parse(ls.get("nekostore_inst")||"{}")}catch(e){return{}}};
+function markInst(a,v){
+  const o=inst(); o[keyOf(a)]=v.ver; ls.set("nekostore_inst",JSON.stringify(o));
+  toast(`Отмечено как установленное: ${a.name} ${fv(v.ver)}`);
+  setTimeout(()=>{render();if($("dlg").open)openApp(apps.indexOf(a))},400);
+}
+const instVer = a => inst()[keyOf(a)];
+const hasUpd = a => {const i=instVer(a);return i!=null&&cmpVer(a.versions[0].ver,i)>0};
+
+/* ---------- список ---------- */
+function render(){
+  const q=$("q").value.trim().toLowerCase();
+  const upd=apps.filter(hasUpd).length;
+  $("tabs").innerHTML=`<button data-t="all" aria-pressed="${tab==="all"}">Все</button><button data-t="upd" aria-pressed="${tab==="upd"}">Обновления${upd?" ("+upd+")":""}</button>`;
+  let items=apps.filter(a=>a.name.toLowerCase().includes(q));
+  if(tab==="upd") items=items.filter(hasUpd);
+  items=sorted(items);
+  const empty = tab==="upd" && !q
+    ? "Обновлений нет. Магазин сравнивает версии с теми, что ты скачал через него."
+    : apps.length ? "Ничего не найдено. Попробуй другое название." : "Здесь пока пусто. Создай релиз в репозитории и прикрепи к нему APK — он появится тут.";
+  $("list").innerHTML = items.length ? items.map(a=>{
+    const v=a.versions[0], idx=apps.indexOf(a), u=hasUpd(a);
+    const line = (u ? `${fv(instVer(a))} → ${fv(v.ver)}` : fv(v.ver)) + (S.meta ? " · "+fmtSize(v.size) : "");
+    return `<div class="card" role="button" tabindex="0" data-i="${idx}">
+      ${iconHtml(a)}
+      <div class="meta"><b>${esc(a.name)}</b><span>${esc(line)}</span></div>
+      <a class="btn" href="${esc(v.url)}" rel="noopener" data-dl="${idx}">${u?"Обновить":"Скачать"}</a></div>`;
+  }).join("") : `<div class="empty">${empty}</div>`;
+}
+
+function openApp(i){
+  const a=apps[i], v=a.versions[0], u=hasUpd(a), iv=instVer(a);
+  $("sheet").innerHTML = `<div class="grab"></div>
+    <div class="head">${iconHtml(a)}
+      <div><h2>${esc(a.name)}</h2><p>Обновлено ${fmtDate(v.date)}</p></div></div>
+    <div class="stats">
+      <span class="chip">${esc(fv(v.ver))}</span>
+      ${S.meta?`<span class="chip">${fmtSize(v.size)}</span>`:""}
+      ${v.pre?'<span class="chip pre">Пре-релиз</span>':""}
+      ${iv!=null?`<span class="chip ok">Установлено ${esc(fv(iv))}</span>`:""}
+    </div>
+    <a class="btn block" style="margin-bottom:${iv!=null?10:20}px" href="${esc(v.url)}" rel="noopener" data-mark="${i}:0">${u?"Обновить до":"Скачать"} ${esc(fv(v.ver))}</a>
+    ${iv!=null?`<div style="text-align:center;margin-bottom:20px"><button class="btn tonal" data-unmark="${i}">Сбросить отметку</button></div>`:""}
+    ${v.notes.trim()?`<h3>Что нового</h3><div class="notes">${esc(v.notes.trim())}</div>`:""}
+    <h3>Все версии</h3>
+    ${a.versions.map((x,j)=>`<div class="ver"><div><b>${esc(fv(x.ver))}${x.pre?" · пре-релиз":""}</b>
+      <small>${fmtDate(x.date)}${S.meta?" · "+fmtSize(x.size):""} · ${esc(x.file)}</small></div>
+      <a class="btn tonal" href="${esc(x.url)}" rel="noopener" data-mark="${i}:${j}">Скачать</a></div>`).join("")}
+    <div class="close"><button class="btn tonal" data-close>Закрыть</button></div>`;
+  if(!$("dlg").open) $("dlg").showModal();
+}
+
+/* ---------- настройки ---------- */
+const seg = (key, opts) => `<div class="seg" data-key="${key}">${opts.map(([v,t])=>`<button data-v="${v}" aria-pressed="${String(S[key])===String(v)}">${t}</button>`).join("")}</div>`;
+const sw = (id,on,title,desc) => `<div class="row"><div class="lbl"><b>${title}</b><small>${desc}</small></div><button class="sw" role="switch" id="${id}" aria-checked="${on}" aria-label="${title}"></button></div>`;
+
+function openSettings(){
+  $("sheet").innerHTML = `<div class="grab"></div>
+    <h2 style="font-size:1.4rem;font-weight:600;margin-bottom:18px">Настройки</h2>
+    <div class="sec"><h3>Вид</h3>
+      <span class="lbl2">Тема</span>
+      ${seg("theme",[["auto","Авто"],["light","Светлая"],["dark","Тёмная"]])}
+      <span class="lbl2" style="margin-top:14px">Цвет акцента</span>
+      <div class="swatches">${HUES.map(([n,h])=>`<button class="sat" data-hue="${h}" title="${n}" aria-label="${n}" aria-pressed="${S.hue===h}" style="background:hsl(${h} 55% 48%)"></button>`).join("")}</div>
+      <span class="lbl2">Плотность списка</span>
+      ${seg("density",[["compact","Компактно"],["comfortable","Просторно"]])}
+    </div>
+    <div class="sec"><h3>Список</h3>
+      <span class="lbl2">Сортировка</span>
+      ${seg("sort",[["date","По дате"],["name","По имени"]])}
+      <div style="height:14px"></div>
+      ${sw("swMeta",S.meta,"Размер файла","Показывать в списке и в карточке")}
+      ${sw("swIcons",S.icons,"Иконки из APK","Магазин скачает APK один раз, чтобы достать иконку (до 80 МБ). Тратит трафик")}
+    </div>
+    <div class="sec"><h3>Уведомления</h3>
+      ${sw("swNotify",S.notify,"О новых версиях","Когда в репозитории появится новое приложение или версия")}
+      <span class="lbl2">Проверять каждые</span>
+      ${seg("every",[["5","5 мин"],["15","15 мин"],["30","30 мин"]])}
+      <p class="hint">${APP?"Работает, пока приложение запущено, в том числе свёрнутое. Если смахнуть его из недавних, проверки остановятся.":"Работает, пока магазин открыт во вкладке (в том числе в фоне). Если страницу закрыть, браузер уведомлений не покажет."}</p>
+    </div>
+    <div class="sec"><h3>Репозиторий</h3>
+      <div class="fld"><input id="repoIn" value="${esc(curRepo())}" placeholder="логин/репозиторий" autocapitalize="off" autocomplete="off" spellcheck="false" aria-label="Репозиторий">
+        <button class="btn" id="repoOk">Применить</button></div>
+      <p class="hint" id="repoHint">Можно вставить ссылку на GitHub целиком.${param?" Сейчас репозиторий задан в адресе страницы (?repo=), он важнее.":""}</p>
+      <div style="margin-top:10px"><button class="btn tonal" id="repoReset">Вернуть ${esc(REPO)}</button></div>
+    </div>
+    <div class="sec"><h3>Данные</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn tonal" id="clrIcons">Очистить кеш иконок</button>
+        <button class="btn tonal" id="clrAll">Сбросить настройки</button></div>
+    </div>
+    <div class="close"><button class="btn tonal" data-close>Готово</button></div>`;
+  $("dlg").showModal();
+}
+function parseRepo(v){
+  v=v.trim().replace(/^https?:\/\/(www\.)?github\.com\//i,"").replace(/\.git$/i,"").replace(/\/+$/,"");
+  const m=v.match(/^([\w.-]+)\/([\w.-]+)/);
+  return m ? m[1]+"/"+m[2] : null;
+}
+
+/* ---------- об авторе ---------- */
+function openAbout(){
+  const L=AUTHOR.links.map(l=>`<a class="link" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.title)}<small>${esc(l.url.replace(/^https?:\/\//,""))}</small></a>`).join("");
+  $("sheet").innerHTML = `<div class="grab"></div>
+    <div class="who"><div class="ava" id="ava">${esc(letter(AUTHOR.name))}</div>
+      <h2>${esc(AUTHOR.name)}</h2><p>${esc(AUTHOR.bio)}</p></div>
+    ${L?`<h3>Ссылки</h3><div class="links">${L}</div>`:""}
+    ${AUTHOR.support?`<a class="btn block" href="${esc(AUTHOR.support)}" target="_blank" rel="noopener">Поддержать автора</a>`:""}
+    <p class="ver-line">NekoStore · версия ${esc(STORE_VERSION)}</p>
+    <div class="close"><button class="btn tonal" data-close>Закрыть</button></div>`;
+  if(AUTHOR.avatar){
+    const im=new Image(); im.alt=""; im.onload=()=>{const a=$("ava");if(a){a.textContent="";a.appendChild(im)}}; im.src=AUTHOR.avatar;
+  }
+  $("dlg").showModal();
+}
+
+/* ---------- уведомления ---------- */
+const notifOK = () => APP ? true : ("Notification" in window && Notification.permission==="granted");
+async function regSW(){if(APP)return null;try{return await navigator.serviceWorker.register("sw.js")}catch(e){return null}}
+async function pushNote(title, body){
+  toast(title+": "+body);
+  if(APP){if(S.notify)post({type:"notify",title,body});return}
+  if(!(S.notify&&notifOK())) return;
+  try{
+    const reg=await navigator.serviceWorker?.getRegistration();
+    if(reg) await reg.showNotification(title,{body,tag:"nekostore-"+body}); else new Notification(title,{body});
+  }catch(e){try{new Notification(title,{body})}catch(_){}}
+}
+function checkNew(list, baselineOnly){
+  if(!S.notify) return;
+  let seen=null; try{seen=JSON.parse(ls.get("nekostore_seen")||"null")}catch(e){}
+  const cur={}; list.forEach(a=>{const v=a.versions[0];cur[keyOf(a)]=v.ver+"|"+v.date});
+  if(seen && !baselineOnly){
+    const msgs=[];
+    for(const a of list){
+      const k=keyOf(a), v=a.versions[0];
+      if(!(k in seen)) msgs.push(["Новое приложение",`${a.name} ${fv(v.ver)}`]);
+      else if(seen[k]!==cur[k]) msgs.push(["Вышла новая версия",`${a.name} ${fv(v.ver)}`]);
+    }
+    msgs.slice(0,3).forEach(m=>pushNote(m[0],m[1]));
+    if(msgs.length>3) pushNote("Ещё новинки","и ещё "+(msgs.length-3));
+  }
+  ls.set("nekostore_seen",JSON.stringify(cur));
+}
+function schedule(){
+  clearInterval(timer);
+  if(S.notify) timer=setInterval(refresh,Math.max(1,+S.every||15)*60000);
+}
+async function refresh(){
+  try{
+    const list=await fetchApps(curRepo());
+    apps=list; lastLoad=Date.now(); render(); loadIcons(); checkNew(list);
+  }catch(e){}
+}
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="visible"&&S.notify&&Date.now()-lastLoad>120000) refresh();
+});
+
+/* ---------- события ---------- */
+$("list").addEventListener("click",e=>{
+  const d=e.target.closest("[data-dl]");
+  if(d){const a=apps[+d.dataset.dl];markInst(a,a.versions[0]);return}   // ссылка скачивания сработает сама
+  const c=e.target.closest(".card"); if(c) openApp(+c.dataset.i);
+});
+$("list").addEventListener("keydown",e=>{
+  if((e.key==="Enter"||e.key===" ")&&e.target.classList.contains("card")){e.preventDefault();openApp(+e.target.dataset.i)}
+});
+$("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(b){tab=b.dataset.t;render()}});
+$("bSet").onclick=openSettings;
+$("bAbout").onclick=openAbout;
+$("q").addEventListener("input",render);
+
+$("dlg").addEventListener("click",async e=>{
+  const t=e.target;
+  if(t===$("dlg")||t.closest("[data-close]")){$("dlg").close();return}
+  const mk=t.closest("[data-mark]");
+  if(mk){const [i,j]=mk.dataset.mark.split(":").map(Number);markInst(apps[i],apps[i].versions[j]);return}
+  const um=t.closest("[data-unmark]");
+  if(um){const a=apps[+um.dataset.unmark],o=inst();delete o[keyOf(a)];ls.set("nekostore_inst",JSON.stringify(o));render();openApp(+um.dataset.unmark);return}
+  const sg=t.closest(".seg button");
+  if(sg){
+    const key=sg.parentElement.dataset.key; S[key]=key==="every"?+sg.dataset.v:sg.dataset.v; save(); applyLook(); render(); if(key==="every")schedule();
+    sg.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b===sg));return;
+  }
+  const st=t.closest(".sat");
+  if(st){S.hue=+st.dataset.hue;save();applyLook();document.querySelectorAll(".sat").forEach(b=>b.setAttribute("aria-pressed",b===st));return}
+  if(t.closest("#swMeta")){S.meta=!S.meta;save();$("swMeta").setAttribute("aria-checked",S.meta);render();return}
+  if(t.closest("#swIcons")){S.icons=!S.icons;save();$("swIcons").setAttribute("aria-checked",S.icons);if(S.icons)loadIcons();return}
+  if(t.closest("#swNotify")){
+    if(S.notify){S.notify=false;save();schedule();$("swNotify").setAttribute("aria-checked",false);return}
+    if(APP){
+      if(!(await askPerm())){toast("Разрешение на уведомления не выдано");return}
+    }else{
+      if(!("Notification" in window)){toast("Этот браузер не поддерживает уведомления");return}
+      const p=await Notification.requestPermission();
+      if(p!=="granted"){toast("Разрешение на уведомления не выдано");return}
+    }
+    S.notify=true;save();await regSW();
+    ls.del("nekostore_seen");checkNew(apps,true);schedule();
+    $("swNotify").setAttribute("aria-checked",true);toast("Уведомления включены");return;
+  }
+  if(t.closest("#repoOk")){
+    const r=parseRepo($("repoIn").value);
+    if(!r){const h=$("repoHint");h.className="hint bad";h.textContent="Нужен формат логин/репозиторий, например nikkraft/NekoStore.";return}
+    S.repo=r===REPO?"":r;save();ls.del("nekostore_seen");$("dlg").close();init();return}
+  if(t.closest("#repoReset")){S.repo="";save();ls.del("nekostore_seen");$("dlg").close();init();return}
+  if(t.closest("#clrIcons")){
+    try{Object.keys(localStorage).filter(k=>k.startsWith("ico:")||k.startsWith("icofail:")).forEach(k=>localStorage.removeItem(k))}catch(e){}
+    tried.clear();attachIcons(apps);render();loadIcons();toast("Кеш иконок очищен");return}
+  if(t.closest("#clrAll")){S={...DEF};save();applyLook();schedule();render();openSettings();toast("Настройки сброшены")}
+});
+
+/* ---------- загрузка ---------- */
+const demo=()=>build([
+  {tag_name:"v2.1.0",published_at:"2026-10-28T10:00:00Z",body:"Исправлены ошибки\nУскорен запуск",assets:[{id:1,name:"Calc-2.1.0.apk",size:6291456,browser_download_url:"#"}]},
+  {tag_name:"v2.0.0",published_at:"2026-10-10T10:00:00Z",body:"Новый интерфейс",assets:[{id:2,name:"Calc-2.0.0.apk",size:5976883,browser_download_url:"#"}]},
+  {tag_name:"v1.4",published_at:"2026-10-20T10:00:00Z",body:"Тёмная тема",assets:[{id:3,name:"Notes-1.4.apk",size:3145728,browser_download_url:"#"}]}
+]);
+async function fetchApps(repo){
+  const r=await fetch(`https://api.github.com/repos/${repo}/releases?per_page=100`,{headers:{Accept:"application/vnd.github+json"}});
+  if(!r.ok) throw new Error(r.status===404?"Репозиторий не найден или он приватный.":r.status===403?"Лимит запросов GitHub исчерпан. Попробуй позже.":"Ошибка GitHub: "+r.status);
+  return build(await r.json());
+}
+async function init(){
+  const repo=curRepo();
+  $("msg").innerHTML="";
+  $("sub").textContent = repo==="owner/repo" ? "Приложения из GitHub Releases" : "Приложения из "+repo;
+  $("list").innerHTML='<div class="loading"><div class="spin"></div>Загружаю релизы…</div>';
+  if(repo==="owner/repo"){
+    apps=demo();
+    $("msg").innerHTML='<div class="banner">Показаны демо-данные. Укажи репозиторий в настройках.</div>';
+    return render();
+  }
+  try{
+    apps=await fetchApps(repo); lastLoad=Date.now();
+    render(); loadIcons(); checkNew(apps);
+  }catch(e){
+    apps=[];$("list").innerHTML="";
+    $("msg").innerHTML=`<div class="banner err">${esc(e.message||"Не удалось загрузить релизы.")} Проверь название репозитория в настройках и интернет.</div>`;
+  }
+}
+if(S.notify){ if(notifOK()){regSW();schedule()} else {S.notify=false;save()} }
+init();
+</script>
+</body>
+</html>
